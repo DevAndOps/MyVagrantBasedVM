@@ -1,8 +1,8 @@
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y update
+echo "export VAR=value" >> /home/$Username/.profile
 apt-get -y install curl
 curl -sSL https://get.docker.com/ | sh
-usermod -aG docker vagrant
+usermod -aG docker $Username
 mkdir -p Application
 git clone https://github.com/DevAndOps/JavaHelloWorld.git Application
-chown -R vagrant Application
+chown -R $Username Application
