@@ -1,0 +1,4 @@
+export Var1=value1
+export Var2=value1
+export Var3=value1
+export Var4=value1

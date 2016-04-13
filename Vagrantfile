@@ -68,6 +68,10 @@ Vagrant.configure(2) do |config|
     s.privileged = false
     s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
   end
+  config.vm.provision "EnvVaribles", type: "file" do |f|
+    f.source = "./EnvVaribles.txt"
+    f.destination = "~/EnvVaribles.txt"
+  end
   config.vm.provision "shell" do |s|
     s.path = "script.sh"
     s.env = { "Username" => "vagrant"}
