@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-if (ENV['SOURCE_FOLDER'].nil?) # will now return true or false
+if (ENV['SOURCE_FOLDER'].nil?) 
  raise("SOURCE_FOLDER is missing")
 end
 

@@ -9,8 +9,10 @@ git clone https://github.com/DevAndOps/JavaHelloWorld.git Application
 chown -R $Username Application 
 docker run -d \
 	   -v /home/vagrant/vault/vault_data/:/root/vault/vault_data/ \
-       -v /home/vagrant/vault.conf:/root/vault.conf cgswong/vault:latest \
-       server -config /root/vault.conf
+       -v /home/vagrant/vault.conf:/root/vault.conf \
+       -p 127.0.0.1:8200:8200 \
+       cgswong/vault:latest \
+       server -config /root/vault.conf 
 
 #vaultContainerID=$(docker ps -q)
 #	docker exec $vaultContainerID bash -c "echo 'export VAULT_ADDR=\'http://127.0.0.1:8200\' >> /etc/.profile' && . /etc/.profile"
