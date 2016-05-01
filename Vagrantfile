@@ -84,6 +84,7 @@ Vagrant.configure(2) do |config|
   end
   config.vm.provision "shell" do |s|
     s.path = "script.sh"
-    s.env = { "Username" => "vagrant"}
+    s.env = { "Username" => "vagrant"
+    }
   end
 end
