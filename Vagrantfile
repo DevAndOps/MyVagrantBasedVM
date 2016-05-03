@@ -5,7 +5,12 @@ if (ENV['SOURCE_FOLDER'].nil?)
  raise("SOURCE_FOLDER is missing")
 end
 
+if (ENV['VAULT_KEY'].nil?) 
+ raise("VAULT_KEY is missing")
+end
+
 $source_folder = ENV['SOURCE_FOLDER']
+$vault_key = ENV['VAULT_KEY']
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -84,7 +89,8 @@ Vagrant.configure(2) do |config|
   end
   config.vm.provision "shell" do |s|
     s.path = "script.sh"
-    s.env = { "Username" => "vagrant"
+    s.env = { "Username" => "vagrant",
+              "Vault_Key" => $vault_key
     }
   end
 end
