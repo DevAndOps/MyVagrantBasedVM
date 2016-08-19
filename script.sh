@@ -1,13 +1,19 @@
 export DEBIAN_FRONTEND=noninteractive
 echo ". ~/EnvVaribles.txt" >> /home/$Username/.profile
 
-apt-get -y install curl
-curl -sSL https://get.docker.com/ | sh
+#apt-get -y install curl
+#curl -sSL https://get.docker.com/ | sh
 usermod -aG docker $Username
 mkdir -p Application
 mkdir -p Vault
+
+git config --global user.email "$GitEmail"
+git config --global user.name "$GitUsername"
+mv ~/.gitconfig /home/$Username/
+chown -R $Username /home/$Username/.gitconfig
 git clone https://github.com/DevAndOps/JavaHelloWorld.git Application
 chown -R $Username Application 
+
 docker run -d \
 	   -v /home/vagrant/vault/vault_data/:/root/vault/vault_data/ \
        -v /home/vagrant/vault.conf:/root/vault.conf \
