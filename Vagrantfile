@@ -13,10 +13,24 @@ if (ENV['SSH_FOLDER'].nil?)
  raise("SSH_FOLDER is missing")
 end
 
+if (ENV['GIT_EMAIL'].nil?) 
+ raise("GIT_EMAIL is missing")
+end
+
+if (ENV['GIT_USERNAME'].nil?) 
+ raise("GIT_USERNAME is missing")
+end
+
+if (ENV['SSH_PRIVATEKEY'].nil?) 
+ raise("SSH_PRIVATEKEY is missing")
+end
 
 $vault_data = ENV['VAULT_DATA_FOLDER']
 $vault_key = ENV['VAULT_KEY']
 $ssh_location = ENV['SSH_FOLDER']
+$git_email = ENV['GIT_EMAIL']
+$git_username = ENV['GIT_USERNAME']
+$ssh_privatekey = ENV['SSH_PRIVATEKEY']
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -55,7 +69,9 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
    config.vm.synced_folder $vault_data, "/home/vagrant/vault/vault_data"
-   config.vm.synced_folder $ssh_location, "/home/vagrant/.ssh"
+   config.vm.synced_folder $ssh_location, "/home/vagrant/.ssh",
+       mount_options: ["dmode=700,fmode=700"]
+
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -94,10 +110,24 @@ Vagrant.configure(2) do |config|
     f.source = "./vault.conf"
     f.destination = "/home/vagrant/vault.conf"
   end
+  config.vm.provision "AddedProfile", type: "file" do |f|
+    f.source = "./additionalProfileContent.txt"
+    f.destination = "/home/vagrant/additionalProfileContent.txt"
+  end
+  config.vm.provision "shell" do |s|
+    s.path = "PrepareMyApp.sh"
+    s.privileged = false
+    s.env = { "GitEmail" => $git_email,
+              "GitUsername" => $git_username,
+              "ssh_privatekey" => $ssh_privatekey
+    }
+  end
   config.vm.provision "shell" do |s|
     s.path = "script.sh"
     s.env = { "Username" => "vagrant",
-              "Vault_Key" => $vault_key
+              "Vault_Key" => $vault_key,
+              "GitEmail" => $git_email,
+              "GitUsername" => $git_username
     }
   end
 end

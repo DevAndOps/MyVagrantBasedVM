@@ -1,18 +1,23 @@
 export DEBIAN_FRONTEND=noninteractive
 echo ". ~/EnvVaribles.txt" >> /home/$Username/.profile
 
-#apt-get -y install curl
-#curl -sSL https://get.docker.com/ | sh
-usermod -aG docker $Username
+: '
+#usermod -aG docker $Username
 mkdir -p Application
-mkdir -p Vault
 
 git config --global user.email "$GitEmail"
 git config --global user.name "$GitUsername"
-mv ~/.gitconfig /home/$Username/
-chown -R $Username /home/$Username/.gitconfig
-git clone https://github.com/DevAndOps/JavaHelloWorld.git Application
-chown -R $Username Application 
+#mv ~/.gitconfig /home/$Username/
+#chown -R $Username /home/$Username/.gitconfig
+eval `ssh-agent -s`
+#ssh-add /home/$Username/.ssh/github_rsa
+ssh-add ~/.ssh/github_rsa
+if [ ! -f ~/.ssh/known_hosts ]; then
+  ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+fi
+git clone git@github.com:DevAndOps/JavaHelloWorld.git Application
+#chown -R $Username Application 
+
 
 docker run -d \
 	   -v /home/vagrant/vault/vault_data/:/root/vault/vault_data/ \
@@ -38,7 +43,7 @@ do
 
    	count=$(( $count + 1 ))
 done	
-
+'
     
 
 #vaultContainerID=$(docker ps -q)
