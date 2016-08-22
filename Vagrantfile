@@ -125,9 +125,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell" do |s|
     s.path = "script.sh"
     s.env = { "Username" => "vagrant",
-              "Vault_Key" => $vault_key,
-              "GitEmail" => $git_email,
-              "GitUsername" => $git_username
+              "Vault_Key" => $vault_key
     }
   end
 end

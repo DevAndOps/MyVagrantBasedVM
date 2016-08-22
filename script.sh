@@ -1,23 +1,7 @@
 export DEBIAN_FRONTEND=noninteractive
 echo ". ~/EnvVaribles.txt" >> /home/$Username/.profile
 
-: '
-#usermod -aG docker $Username
-mkdir -p Application
-
-git config --global user.email "$GitEmail"
-git config --global user.name "$GitUsername"
-#mv ~/.gitconfig /home/$Username/
-#chown -R $Username /home/$Username/.gitconfig
-eval `ssh-agent -s`
-#ssh-add /home/$Username/.ssh/github_rsa
-ssh-add ~/.ssh/github_rsa
-if [ ! -f ~/.ssh/known_hosts ]; then
-  ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-fi
-git clone git@github.com:DevAndOps/JavaHelloWorld.git Application
-#chown -R $Username Application 
-
+usermod -aG docker $Username
 
 docker run -d \
 	   -v /home/vagrant/vault/vault_data/:/root/vault/vault_data/ \
@@ -27,6 +11,9 @@ docker run -d \
        server -config /root/vault.conf 
 
 IFS=',' read -a VaultKey <<< "$Vault_Key"
+
+# it takes few moments for vault to initialise.
+sleep 2m
 
 curl \
 	-X GET \
@@ -42,9 +29,7 @@ do
     http://127.0.0.1:8200/v1/sys/unseal
 
    	count=$(( $count + 1 ))
-done	
-'
-    
+done	    
 
 #vaultContainerID=$(docker ps -q)
 #	docker exec $vaultContainerID bash -c "echo 'export VAULT_ADDR=\'http://127.0.0.1:8200\' >> /etc/.profile' && . /etc/.profile"
