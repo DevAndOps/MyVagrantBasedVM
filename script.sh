@@ -3,14 +3,8 @@ echo ". ~/EnvVaribles.txt" >> /home/$Username/.profile
 
 usermod -aG docker $Username
 
-docker run -d \
-	   -v /home/vagrant/vault/vault_data/:/root/vault/vault_data/ \
-       -v /home/vagrant/vault.conf:/root/vault.conf \
-       -p 127.0.0.1:8200:8200 \
-       cgswong/vault:latest \
-       server -config /root/vault.conf 
-
-IFS=',' read -a VaultKey <<< "$Vault_Key"
+cd ./docker
+docker-compose up -d
 
 # it takes few moments for vault to initialise.
 sleep 2m
@@ -19,6 +13,7 @@ curl \
 	-X GET \
 	http://127.0.0.1:8200/v1/sys/seal-status
 
+IFS=',' read -a VaultKey <<< "$Vault_Key"
 count=0
 while [ "x${VaultKey[count]}" != "x" ]
 do

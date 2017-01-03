@@ -1,0 +1,12 @@
+
+version: '2'
+
+services:
+  vault:
+    image: cgswong/vault:latest
+    ports:
+      - 127.0.0.1:8200:8200
+    volumes:
+      - /home/vagrant/vault/vault_data:/root/vault/vault_data
+      - /home/vagrant/vault/vault.conf:/root/vault/vault.conf
+    command: server -config=/root/vault/vault.conf

@@ -106,9 +106,18 @@ Vagrant.configure(2) do |config|
     f.source = "./EnvVaribles.txt"
     f.destination = "~/EnvVaribles.txt"
   end
+  config.vm.provision "PrepareMyAppEnvironment", type: "shell" do |s|
+    # adding bash complition for docker-compose
+    s.inline = "curl -L https://raw.githubusercontent.com/docker/compose/$(docker-compose version --short)/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose"
+    s.inline = "chown vagrant:vagrant /home/vagrant/vault/"
+  end
+  config.vm.provision "DockerComposer", type: "file" do |f|
+    f.source = "./docker-compose.yml"
+    f.destination = "/home/vagrant/docker/docker-compose.yml"
+  end
   config.vm.provision "VaultConfiguration", type: "file" do |f|
     f.source = "./vault.conf"
-    f.destination = "/home/vagrant/vault.conf"
+    f.destination = "/home/vagrant/vault/vault.conf"
   end
   config.vm.provision "AddedProfile", type: "file" do |f|
     f.source = "./additionalProfileContent.txt"
