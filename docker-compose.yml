@@ -68,4 +68,5 @@ services:
     command: server -config=/root/vault/vault.conf
   
   javahelloworld:
+    build: ./Application/.
     image: mrcontainer/javahelloworld

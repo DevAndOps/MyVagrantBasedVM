@@ -1,4 +1,4 @@
-mkdir -p Application
+mkdir -p ./docker/Application
 
 git config --global user.email "$GitEmail"
 git config --global user.name "$GitUsername"
@@ -7,7 +7,7 @@ ssh-add ~/.ssh/github_rsa
 if [ ! -f ~/.ssh/known_hosts ]; then
   ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 fi
-git clone git@github.com:DevAndOps/JavaHelloWorld.git Application
+git clone git@github.com:DevAndOps/JavaHelloWorld.git ./docker/Application
 
 sed -i 's,$privatekey,'"$ssh_privatekey"',g' additionalProfileContent.txt
 echo ". ~/additionalProfileContent.txt" >> ~/.profile

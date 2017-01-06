@@ -3,8 +3,6 @@ echo ". ~/EnvVaribles.txt" >> /home/$Username/.profile
 
 usermod -aG docker $Username
 
-docker build -t mrcontainer/javahelloworld ./Application/
-
 cd ./docker
 docker-compose up -d
 
