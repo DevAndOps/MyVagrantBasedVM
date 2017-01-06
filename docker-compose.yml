@@ -2,7 +2,63 @@
 version: '2'
 
 services:
+
+  consulserver:
+    ports:
+      - 8300:8300
+      - 8301:8301
+      - 8301:8301/udp
+      - 8302:8302
+      - 8302:8302/udp
+      - 8400:8400
+      - 8500:8500
+      - 53:53/udp
+    hostname: consulserver
+    container_name: consulserver
+    image: progrium/consul
+    command: -server -bootstrap-expect=1 -ui-dir /ui
+    labels: 
+      - SERVICE_8300_IGNORE=true
+      - SERVICE_8301_IGNORE=true
+      - SERVICE_8301/udp_IGNORE=true
+      - SERVICE_8302_IGNORE=true
+      - SERVICE_8302/udp_IGNORE=true
+      - SERVICE_8400_IGNORE=true
+      - SERVICE_53/udp_IGNORE=true
+
+  consul-agent:
+    depends_on: 
+      - consulserver
+    links: 
+      - consulserver
+    ports:
+      - 8310:8301
+      - 8310:8301/udp
+      - 8410:8400
+      - 8510:8500
+      - 54:53/udp
+    hostname: consul-agent
+    container_name: consul-agent
+    image: progrium/consul
+    command: -retry-join consulserver
+
+  registrator:
+    depends_on: 
+      - consul-agent
+    links: 
+      - consul-agent
+    volumes: 
+      - /var/run/docker.sock:/tmp/docker.sock
+    hostname: registrator
+    container_name: registrator
+    image: gliderlabs/registrator:latest
+    command: consul://consul-agent:8500
+
   vault:
+    hostname: vault
+    container_name: vault
+    depends_on: 
+      - registrator
     image: cgswong/vault:latest
     ports:
       - 127.0.0.1:8200:8200
