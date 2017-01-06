@@ -3,15 +3,18 @@ echo ". ~/EnvVaribles.txt" >> /home/$Username/.profile
 
 usermod -aG docker $Username
 
+docker build -t mrcontainer/javahelloworld ./Application/
+
 cd ./docker
 docker-compose up -d
 
 # it takes few moments for vault to initialise.
 sleep 2m
 
-curl \
-	-X GET \
-	http://127.0.0.1:8200/v1/sys/seal-status
+# get vault details from discovery service
+vaultServicePort=$(curl -s -X GET http://localhost:8500/v1/catalog/service/vault | jq -c '.[0].ServicePort')
+
+curl -X GET "http://localhost:$vaultServicePort/v1/sys/seal-status"
 
 for key in $Vault_Key
 do
@@ -19,7 +22,7 @@ do
 	-H "Content-Type: application/json" \
     -X PUT \
     -d '{"key": "'"$key"'"}' \
-    http://127.0.0.1:8200/v1/sys/unseal
+    "http://127.0.0.1:$vaultServicePort/v1/sys/unseal"
 done  
 
 #vaultContainerID=$(docker ps -q)

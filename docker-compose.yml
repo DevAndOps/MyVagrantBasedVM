@@ -66,3 +66,6 @@ services:
       - /home/vagrant/vault/vault_data:/root/vault/vault_data
       - /home/vagrant/vault/vault.conf:/root/vault/vault.conf
     command: server -config=/root/vault/vault.conf
+  
+  javahelloworld:
+    image: mrcontainer/javahelloworld
