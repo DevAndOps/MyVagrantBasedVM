@@ -13,9 +13,7 @@ curl \
 	-X GET \
 	http://127.0.0.1:8200/v1/sys/seal-status
 
-IFS=','; read -a VaultKey <<< "$Vault_Key"
-
-for key in ${VaultKey[*]}
+for key in $Vault_Key
 do
 	curl \
 	-H "Content-Type: application/json" \
