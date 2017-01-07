@@ -63,8 +63,8 @@ services:
     ports:
       - 127.0.0.1:8200:8200
     volumes:
-      - /home/vagrant/vault/vault_data:/root/vault/vault_data
-      - /home/vagrant/vault/vault.conf:/root/vault/vault.conf
+      - /home/vagrant/docker/vault/vault_data:/root/vault/vault_data
+      - /home/vagrant/docker/vault/configuration/vault.conf:/root/vault/vault.conf
     command: server -config=/root/vault/vault.conf
   
   javahelloworld:

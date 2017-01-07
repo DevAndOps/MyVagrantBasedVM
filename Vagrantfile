@@ -9,6 +9,10 @@ if (ENV['VAULT_KEY'].nil?)
  raise("VAULT_KEY is missing")
 end
 
+if (ENV['VAULT_TOKEN'].nil?) 
+ raise("VAULT_TOKEN is missing")
+end
+
 if (ENV['SSH_FOLDER'].nil?) 
  raise("SSH_FOLDER is missing")
 end
@@ -27,6 +31,7 @@ end
 
 $vault_data = ENV['VAULT_DATA_FOLDER']
 $vault_key = ENV['VAULT_KEY']
+$vault_token = ENV['VAULT_TOKEN']
 $ssh_location = ENV['SSH_FOLDER']
 $git_email = ENV['GIT_EMAIL']
 $git_username = ENV['GIT_USERNAME']
@@ -68,7 +73,7 @@ Vagrant.configure(2) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-   config.vm.synced_folder $vault_data, "/home/vagrant/vault/vault_data"
+   config.vm.synced_folder $vault_data, "/home/vagrant/docker/vault/vault_data"
    config.vm.synced_folder $ssh_location, "/home/vagrant/.ssh",
        mount_options: ["dmode=700,fmode=700"]
 
@@ -109,15 +114,15 @@ Vagrant.configure(2) do |config|
   config.vm.provision "PrepareMyAppEnvironment", type: "shell" do |s|
     # adding bash complition for docker-compose
     s.inline = "curl -L https://raw.githubusercontent.com/docker/compose/$(docker-compose version --short)/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose"
-    s.inline = "chown vagrant:vagrant /home/vagrant/vault/"
+    s.inline = "chown -R vagrant:vagrant /home/vagrant/docker"
   end
   config.vm.provision "DockerComposer", type: "file" do |f|
     f.source = "./docker-compose.yml"
     f.destination = "/home/vagrant/docker/docker-compose.yml"
   end
   config.vm.provision "VaultConfiguration", type: "file" do |f|
-    f.source = "./vault.conf"
-    f.destination = "/home/vagrant/vault/vault.conf"
+    f.source = "./VaultConfiguration"
+    f.destination = "/home/vagrant/docker/vault/configuration"
   end
   config.vm.provision "AddedProfile", type: "file" do |f|
     f.source = "./additionalProfileContent.txt"
@@ -134,7 +139,8 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell" do |s|
     s.path = "script.sh"
     s.env = { "Username" => "vagrant",
-              "Vault_Key" => $vault_key
+              "Vault_Key" => $vault_key,
+              "Vault_token" => $vault_token
     }
   end
 end
