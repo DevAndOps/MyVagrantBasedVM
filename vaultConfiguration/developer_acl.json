@@ -1,0 +1,10 @@
+{
+	"path": {
+		"secret/*": {
+			"policy": "write"
+		},
+		"auth/token/lookup-self": {
+			"policy": "read"
+		}
+	}
+}

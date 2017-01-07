@@ -27,12 +27,13 @@ do
 done  
 
 # allows to use 'vault <command>' in docker container
-docker-compose exec -T vault /bin/bash -lc "echo 'export VAULT_ADDR=\"http://127.0.0.1:8200\"' > /etc/profile.d/vault_congifure.sh && . /etc/profile"
+docker-compose exec -T vault /bin/bash -lc "echo 'export VAULT_ADDR=\"http://localhost:$vaultServicePort\"' > /etc/profile.d/vault_congifure.sh && . /etc/profile"
 
 # add developer policy
-#curl -s -X PUT -H "X-Vault-Token:$Vault_token" -d @policy.json http://localhost:$vaultServicePort/v1/sys/policy/developer
 
-#vaultContainerID=$(docker ps -q)
-#	docker exec $vaultContainerID bash -c "echo 'export VAULT_ADDR=\'http://127.0.0.1:8200\' >> /etc/.profile && . /etc/.profile"
-       
-#export VAULT_ADDR='http://127.0.0.1:8200'
+# formatting policy file in such a way so that it can be used in HTTP API
+acljson=$(cat configuration/developer_acl.json | jq @json)
+printf "{\"rules\":%s}" $acljson > ./configuration/developer_acl_deliver.json
+
+# adding developer policy (idempotent)
+curl -s -X PUT -H "X-Vault-Token:$Vault_token" -d @./configuration/developer_acl_deliver.json http://localhost:$vaultServicePort/v1/sys/policy/developer
