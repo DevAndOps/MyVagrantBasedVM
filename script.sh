@@ -36,4 +36,14 @@ acljson=$(cat configuration/developer_acl.json | jq @json)
 printf "{\"rules\":%s}" $acljson > ./configuration/developer_acl_deliver.json
 
 # adding developer policy (idempotent)
-curl -s -X PUT -H "X-Vault-Token:$Vault_token" -d @./configuration/developer_acl_deliver.json http://localhost:$vaultServicePort/v1/sys/policy/developer
+curl -s -X PUT -H "X-Vault-Token:$Vault_token" -d @./configuration/developer_acl_deliver.json \ 
+http://localhost:$vaultServicePort/v1/sys/policy/developer
+
+# prepaing client token for all future interaction with vault (idempotent)
+curl -s -X PUT -H "X-Vault-Token:$Vault_token" http://localhost:$vaultServicePort/v1/sys/revoke-prefix/auth/token/create 
+clientToken=$(curl -s -X POST -H "X-Vault-Token:$Vault_token" -d "{\"policies\":[\"developer\"]}" \
+http://localhost:$vaultServicePort/v1/auth/token/create | jq -r .auth.client_token)
+
+# root token not to be used
+unset Vault_token
+
