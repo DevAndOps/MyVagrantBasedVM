@@ -4,6 +4,9 @@ version: '2'
 services:
 
   consulserver:
+    environment: 
+      CONSUL_LOCAL_CONFIG: "{\"leave_on_terminate\": true}"
+      CONSUL_BIND_INTERFACE: eth0
     ports:
       - 8300:8300
       - 8301:8301
@@ -14,11 +17,11 @@ services:
       - 8500:8500
       - 53:53/udp
     volumes: 
-      - /home/vagrant/docker/consul/data:/data
+      - /home/vagrant/docker/consul/data:/consul/data
     hostname: consulserver
     container_name: consulserver
-    image: progrium/consul
-    command: -server -bootstrap-expect=1 -ui-dir /ui
+    image: consul
+    command: agent -server -bootstrap-expect=1 -ui-dir /ui -client 0.0.0.0
     labels: 
       - SERVICE_8300_IGNORE=true
       - SERVICE_8301_IGNORE=true
